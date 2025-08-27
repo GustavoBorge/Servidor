@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Barbearia - Sistema Completo</title>
+    <link rel="stylesheet" href="/CSS/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Menu Lateral -->
+      <div class="sidebar">
+        <!-- Botão de alternar tema -->
+        
+        <h2>Barbearia</h2>
+        
+        <div class="tab active" onclick="showTab('venda')">Registrar Venda</div>
+        <div class="tab" onclick="showTab('cvenda')">Consultar vendas</div>
+        <div class="tab" onclick="showTab('clientes')">Cadastrar Cliente</div>
+        <div class="tab" onclick="showTab('barbeiros')">Cadastrar Barbeiro</div>
+        <div class="tab" onclick="showTab('servicos')">Cadastrar Serviço</div>
+        <div class="tab" onclick="showTab('comissao')">Calcular Comissão</div>
+        <div class="tab" onclick="showTab('agendar')">Agendar Horário</div>
+      </div>
+
+      <!-- Conteúdo Principal -->
+       
+      <div class="main-content">
+        <button id="btnTema" class="btn-tema">Alternar para Claro</button>
+        <!-- Tela: Registrar Venda -->
+        <div id="venda" class="tab-content active">
+          <h1>Registrar Venda</h1>
+          <form id="formVenda">
+            <label for="cliente">Cliente</label>
+            <div class="search-container">
+              <input
+                type="text"
+                id="cliente"
+                placeholder="Digite para buscar ou adicionar"
+              />
+              <ul class="suggestions" id="suggestions-cliente"></ul>
+            </div>
+
+            <label for="barbeiro">Nome do Barbeiro</label>
+            <div class="search-container">
+              <input
+                type="text"
+                id="barbeiro"
+                placeholder="Digite para buscar ou adicionar"
+              />
+              <ul class="suggestions" id="suggestions-barbeiro"></ul>
+            </div>
+
+            <label for="servico">Serviço</label>
+            <div class="search-container">
+              <input
+                type="text"
+                id="servico"
+                placeholder="Digite para buscar ou adicionar"
+              />
+              <ul class="suggestions" id="suggestions-servico"></ul>
+            </div>
+
+            <label for="valor">Valor da Venda (R$)</label>
+            <input
+              type="number"
+              step="0.01"
+              id="valor"
+              placeholder="Exemplo: 50.00"
+              required
+            />
+
+            <label for="pagamento">Forma de Pagamento</label>
+            <select id="pagamento" required>
+              <option value="">Selecione</option>
+              <option value="Dinheiro">Dinheiro</option>
+              <option value="Pix">Pix</option>
+              <option value="Cartão de Crédito">Cartão de Crédito</option>
+              <option value="Cartão de Débito">Cartão de Débito</option>
+            </select>
+
+            <button type="submit">Registrar Venda</button>
+          </form>
+
+          <div class="resumo" id="resumoVenda" style="display: none">
+            <strong>Venda registrada:</strong><br />
+            <p><strong>Cliente:</strong> <span id="infoCliente"></span></p>
+            <p><strong>Barbeiro:</strong> <span id="infoBarbeiro"></span></p>
+            <p><strong>Serviço:</strong> <span id="infoServico"></span></p>
+            <p><strong>Valor:</strong> R$ <span id="infoValor"></span></p>
+            <p><strong>Pagamento:</strong> <span id="infoPagamento"></span></p>
+          </div>
+        </div>
+
+        <!--Consultar Vendas -->
+        <div id="cvenda" class="tab-content">
+          <h1>Consultar Vendas</h1>
+
+          <div class="filter-container">
+            <div class="form-group">
+              <label for="filtro-data-inicio">Data Inicial</label>
+              <input type="date" id="filtro-data-inicio" />
+            </div>
+
+            <div class="form-group">
+              <label for="filtro-data-fim">Data Final</label>
+              <input type="date" id="filtro-data-fim" />
+            </div>
+
+            <!-- Campo: Cliente (com autocompletar) -->
+            <div class="form-group">
+              <label for="filtro-cliente">Cliente</label>
+              <div class="search-container">
+                <input
+                  type="text"
+                  id="filtro-cliente"
+                  placeholder="Nome do cliente"
+                />
+                <ul class="suggestions" id="suggestions-filtro-cliente"></ul>
+              </div>
+            </div>
+
+            <!-- Campo: Barbeiro (com autocompletar) -->
+            <div class="form-group">
+              <label for="filtro-barbeiro">Barbeiro</label>
+              <div class="search-container">
+                <input
+                  type="text"
+                  id="filtro-barbeiro"
+                  placeholder="Nome do barbeiro"
+                />
+                <ul class="suggestions" id="suggestions-filtro-barbeiro"></ul>
+              </div>
+            </div>
+
+            <!-- Campo: Serviço (com autocompletar) -->
+            <div class="form-group">
+              <label for="filtro-servico">Serviço</label>
+              <div class="search-container">
+                <input
+                  type="text"
+                  id="filtro-servico"
+                  placeholder="Tipo de serviço"
+                />
+                <ul class="suggestions" id="suggestions-filtro-servico"></ul>
+              </div>
+            </div>
+
+            <button type="button" onclick="filtrarVendas()" class="btn-filter">
+              Filtrar Vendas
+            </button>
+          </div>
+
+          <div id="resultados-vendas">
+            <table id="tabela-vendas" style="display: none">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Cliente</th>
+                  <th>Barbeiro</th>
+                  <th>Serviço</th>
+                  <th>Valor (R$)</th>
+                  <th>Pagamento</th>
+                </tr>
+              </thead>
+              <tbody id="corpo-tabela-vendas">
+                <!-- Linhas preenchidas dinamicamente -->
+              </tbody>
+            </table>
+            <p
+              id="mensagem-vazio"
+              style="display: none; color: #777; text-align: center"
+            >
+              Nenhuma venda encontrada com os filtros aplicados.
+            </p>
+          </div>
+        </div>
+
+        <!-- Tela: Calcular Comissão -->
+        <div id="comissao" class="tab-content">
+          <h1>Calcular Comissão</h1>
+          <label for="barbeiroComissao">Nome do Barbeiro</label>
+          <div class="search-container">
+            <input
+              type="text"
+              id="barbeiroComissao"
+              placeholder="Digite para buscar"
+            />
+            <ul class="suggestions" id="suggestions-comissao"></ul>
+          </div>
+          <label for="periodo">Período</label>
+          <select id="periodo">
+            <option value="semana">Últimos 7 dias</option>
+            <option value="mes">Últimos 30 dias</option>
+            <option value="personalizado">Data Personalizada</option>
+          </select>
+          <div id="dataPersonalizada" style="display: none">
+            <label for="dataInicio">Data de Início</label>
+            <input type="date" id="dataInicio" />
+            <label for="dataFim">Data de Fim</label>
+            <input type="date" id="dataFim" />
+          </div>
+          <button onclick="buscarVendas()">Buscar Vendas</button>
+          <div class="resumo" id="vendasInfo" style="display: none">
+            <strong>Vendas encontradas:</strong><br />
+            <p>
+              <strong>Total de Vendas:</strong> R$
+              <span id="totalVendasExibido"></span>
+            </p>
+          </div>
+          <div id="comissaoInputs" style="display: none">
+            <label for="porcentagem">Porcentagem de Comissão (%)</label>
+            <input
+              type="number"
+              id="porcentagem"
+              placeholder="Exemplo: 30"
+              step="0.01"
+            />
+            <button onclick="calcularComissao()">Calcular Comissão</button>
+          </div>
+          <div class="resumo" id="resultado" style="display: none">
+            <strong>Resultado:</strong><br />
+            <p><strong>Barbeiro:</strong> <span id="nomeBarbeiroRes"></span></p>
+            <p>
+              <strong>Total de Vendas:</strong> R$
+              <span id="totalVendasRes"></span>
+            </p>
+            <p>
+              <strong>Comissão (%):</strong> <span id="percentualRes"></span>%
+            </p>
+            <p>
+              <strong>Valor da Comissão:</strong> R$
+              <span id="valorComissaoRes"></span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Tela: Cadastrar Cliente -->
+        <div id="clientes" class="tab-content">
+          <h1>Cadastrar Cliente</h1>
+          <form id="formCliente">
+            <label for="nomeCliente">Nome do Cliente</label>
+            <input
+              type="text"
+              id="nomeCliente"
+              placeholder="Ex: Marcos Oliveira"
+              required
+            />
+            <label for="telefoneCliente">Telefone (opcional)</label>
+            <input
+              type="text"
+              id="telefoneCliente"
+              placeholder="(XX) XXXXX-XXXX"
+            />
+            <button type="submit">Cadastrar Cliente</button>
+          </form>
+          <div class="resumo">
+            <strong>Clientes Cadastrados:</strong>
+            <ul id="listaClientes"></ul>
+          </div>
+        </div>
+
+        <!-- Tela: Cadastrar Barbeiro -->
+        <div id="barbeiros" class="tab-content">
+          <h1>Cadastrar Barbeiro</h1>
+          <form id="formBarbeiro">
+            <label for="nomeBarbeiro">Nome do Barbeiro</label>
+            <input
+              type="text"
+              id="nomeBarbeiro"
+              placeholder="Ex: João Silva"
+              required
+            />
+            <label for="telefoneBarbeiro">Telefone (opcional)</label>
+            <input
+              type="text"
+              id="telefoneBarbeiro"
+              placeholder="(XX) XXXXX-XXXX"
+            />
+            <button type="submit">Cadastrar Barbeiro</button>
+          </form>
+          <div class="resumo">
+            <strong>Barbeiros Cadastrados:</strong>
+            <ul id="listaBarbeiros"></ul>
+          </div>
+        </div>
+
+        <!-- Tela: Cadastrar Serviço -->
+        <div id="servicos" class="tab-content">
+          <h1>Cadastrar Serviço</h1>
+          <form id="formServico">
+            <label for="nomeServico">Nome do Serviço</label>
+            <input
+              type="text"
+              id="nomeServico"
+              placeholder="Ex: Corte Social"
+              required
+            />
+            <label for="precoServico">Preço (R$)</label>
+            <input
+              type="number"
+              step="0.01"
+              id="precoServico"
+              placeholder="Ex: 40.00"
+              required
+            />
+            <button type="submit">Cadastrar Serviço</button>
+          </form>
+          <div class="resumo">
+            <strong>Serviços Cadastrados:</strong>
+            <ul id="listaServicos"></ul>
+          </div>
+        </div>
+
+        <!-- Tela: Agendar Horário -->
+        <div id="agendar" class="tab-content">
+          <h1>Agendar Horário</h1>
+          <form id="formAgendar">
+            <label for="agendarCliente">Cliente</label>
+            <div class="search-container">
+              <input
+                type="text"
+                id="agendarCliente"
+                placeholder="Digite para buscar ou adicionar"
+                required
+              />
+              <ul class="suggestions" id="suggestions-agendar-cliente"></ul>
+            </div>
+
+            <label for="agendarBarbeiro">Barbeiro</label>
+            <div class="search-container">
+              <input
+                type="text"
+                id="agendarBarbeiro"
+                placeholder="Digite para buscar ou adicionar"
+                required
+              />
+              <ul class="suggestions" id="suggestions-agendar-barbeiro"></ul>
+            </div>
+
+            <label for="agendarServico">Serviço</label>
+            <div class="search-container">
+              <input
+                type="text"
+                id="agendarServico"
+                placeholder="Digite para buscar ou adicionar"
+                required
+              />
+              <ul class="suggestions" id="suggestions-agendar-servico"></ul>
+            </div>
+
+            <label for="agendarData">Data</label>
+            <input type="date" id="agendarData" required />
+
+            <label for="agendarHora">Hora</label>
+            <input type="time" id="agendarHora" required />
+
+            <label for="agendarObs">Observações</label>
+            <textarea id="agendarObs" placeholder="Observações (opcional)"></textarea>
+
+            <button type="submit">Agendar</button>
+          </form>
+          <div class="resumo" id="resumoAgendar" style="display: none">
+            <strong>Horário agendado com sucesso!</strong>
+            <p><strong>Cliente:</strong> <span id="agendarInfoCliente"></span></p>
+            <p><strong>Barbeiro:</strong> <span id="agendarInfoBarbeiro"></span></p>
+            <p><strong>Serviço:</strong> <span id="agendarInfoServico"></span></p>
+            <p><strong>Data:</strong> <span id="agendarInfoData"></span></p>
+            <p><strong>Hora:</strong> <span id="agendarInfoHora"></span></p>
+            <p><strong>Observações:</strong> <span id="agendarInfoObs"></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+
+
+
+<script>
+
+// === FUNÇÕES DE NAVEGAÇÃO ENTRE ABAS ===
+function showTab(tabId) {
+  document.querySelectorAll(".sidebar .tab").forEach((tab) => tab.classList.remove("active"));
+  document.querySelectorAll(".main-content .tab-content").forEach((content) => content.classList.remove("active"));
+  document.querySelector(`.sidebar .tab[onclick="showTab('${tabId}')"]`).classList.add("active");
+  document.getElementById(tabId).classList.add("active");
+
+  if (tabId === "clientes") carregarClientes();
+  if (tabId === "barbeiros") carregarBarbeiros();
+  if (tabId === "servicos") carregarServicos();
+  if (tabId === "venda") atualizarBuscas();
+  if (tabId === "comissao") atualizarBuscas();
+}
+
+// === GERENCIAMENTO DE CLIENTES ===
+function carregarClientes() {
+  const lista = document.getElementById("listaClientes");
+  const clientes = JSON.parse(localStorage.getItem("clientes")) || [];
+  lista.innerHTML = "";
+
+  if (clientes.length === 0) {
+    const li = document.createElement("li");
+    li.textContent = "Nenhum cliente cadastrado.";
+    lista.appendChild(li);
+    return;
+  }
+
+  clientes.forEach((cliente, index) => {
+    const li = document.createElement("li");
+    const infoDiv = document.createElement("div");
+    infoDiv.className = "cliente-info";
+
+    const nomeSpan = document.createElement("strong");
+    nomeSpan.textContent = cliente.nome;
+    if (!cliente.ativo) {
+      nomeSpan.style.textDecoration = "line-through";
+      nomeSpan.style.color = "#999";
+    }
+    nomeSpan.style.cursor = "pointer";
+    nomeSpan.title = "Clique para editar";
+    nomeSpan.onclick = function () {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = cliente.nome;
+      input.className = "edit-input";
+      input.onblur = function () {
+        if (input.value.trim()) {
+          cliente.nome = input.value.trim();
+          clientes[index] = cliente;
+          localStorage.setItem("clientes", JSON.stringify(clientes));
+          carregarClientes();
+          atualizarBuscas();
+        }
+      };
+      input.onkeydown = function (e) {
+        if (e.key === "Enter") input.blur();
+      };
+      infoDiv.replaceChild(input, nomeSpan);
+      input.focus();
+    };
+
+    const telSpan = document.createElement("span");
+    telSpan.textContent = cliente.telefone ? `Telefone: ${cliente.telefone}` : "Telefone não informado";
+    if (!cliente.ativo) {
+      telSpan.style.color = "#999";
+    }
+    telSpan.style.cursor = "pointer";
+    telSpan.title = "Clique para editar";
+    telSpan.onclick = function () {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = cliente.telefone || "";
+      input.className = "edit-input tel";
+      input.placeholder = "(XX) XXXXX-XXXX";
+      input.onblur = function () {
+        cliente.telefone = input.value.trim() || null;
+        clientes[index] = cliente;
+        localStorage.setItem("clientes", JSON.stringify(clientes));
+        carregarClientes();
+        atualizarBuscas();
+      };
+      input.onkeydown = function (e) {
+        if (e.key === "Enter") input.blur();
+      };
+      infoDiv.replaceChild(input, telSpan);
+      input.focus();
+    };
+
+    infoDiv.appendChild(nomeSpan);
+    infoDiv.appendChild(telSpan);
+
+    // === BOTÃO DE ATIVAR/INATIVAR (CLIENTE) ===
+    const statusBtn = document.createElement("button");
+    statusBtn.className = "btn-status";
+    statusBtn.title = cliente.ativo ? "Clique para inativar" : "Clique para ativar";
+    statusBtn.innerHTML = cliente.ativo ? "✅" : "⏸️";
+    statusBtn.style.backgroundColor = cliente.ativo ? "#2e7d32" : "#c62828";
+
+    statusBtn.onclick = function () {
+      const novoStatus = !cliente.ativo;
+      if (confirm(`Tem certeza que deseja ${novoStatus ? 'ativar' : 'inativar'} o cliente "${cliente.nome}"?`)) {
+        cliente.ativo = novoStatus;
+        clientes[index] = cliente;
+        localStorage.setItem("clientes", JSON.stringify(clientes));
+        carregarClientes();
+        atualizarBuscas();
+      }
+    };
+
+    li.appendChild(infoDiv);
+    li.appendChild(statusBtn);
+    lista.appendChild(li);
+  });
+}
+
+// Formulário de cadastro de cliente
+document.getElementById("formCliente").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const nome = document.getElementById("nomeCliente").value.trim();
+  const telefone = document.getElementById("telefoneCliente").value.trim() || null;
+
+  if (!nome) {
+    alert("O nome do cliente é obrigatório.");
+    return;
+  }
+
+  const clientes = JSON.parse(localStorage.getItem("clientes")) || [];
+  if (clientes.some((c) => c.nome === nome)) {
+    alert("Cliente já cadastrado com esse nome.");
+    return;
+  }
+
+  // Adiciona com status ativo
+  clientes.push({ nome, telefone, ativo: true });
+  localStorage.setItem("clientes", JSON.stringify(clientes));
+  document.getElementById("nomeCliente").value = "";
+  document.getElementById("telefoneCliente").value = "";
+  carregarClientes();
+  atualizarBuscas();
+});
+
+// === GERENCIAMENTO DE BARBEIROS ===
+function carregarBarbeiros() {
+  const lista = document.getElementById("listaBarbeiros");
+  const barbeiros = JSON.parse(localStorage.getItem("barbeiros")) || [];
+  lista.innerHTML = "";
+
+  if (barbeiros.length === 0) {
+    const li = document.createElement("li");
+    li.textContent = "Nenhum barbeiro cadastrado.";
+    lista.appendChild(li);
+    return;
+  }
+
+  barbeiros.forEach((barbeiro, index) => {
+    const li = document.createElement("li");
+    const infoDiv = document.createElement("div");
+    infoDiv.className = "cliente-info";
+
+    const nomeSpan = document.createElement("strong");
+    nomeSpan.textContent = barbeiro.nome;
+    if (!barbeiro.ativo) {
+      nomeSpan.style.textDecoration = "line-through";
+      nomeSpan.style.color = "#999";
+    }
+    nomeSpan.style.cursor = "pointer";
+    nomeSpan.title = "Clique para editar";
+    nomeSpan.onclick = function () {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = barbeiro.nome;
+      input.className = "edit-input";
+      input.onblur = function () {
+        if (input.value.trim()) {
+          barbeiro.nome = input.value.trim();
+          barbeiros[index] = barbeiro;
+          localStorage.setItem("barbeiros", JSON.stringify(barbeiros));
+          carregarBarbeiros();
+          atualizarBuscas();
+        }
+      };
+      input.onkeydown = function (e) {
+        if (e.key === "Enter") input.blur();
+      };
+      infoDiv.replaceChild(input, nomeSpan);
+      input.focus();
+    };
+
+    const telSpan = document.createElement("span");
+    telSpan.textContent = barbeiro.telefone ? `Telefone: ${barbeiro.telefone}` : "Telefone não informado";
+    if (!barbeiro.ativo) {
+      telSpan.style.color = "#999";
+    }
+    telSpan.style.cursor = "pointer";
+    telSpan.title = "Clique para editar";
+    telSpan.onclick = function () {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = barbeiro.telefone || "";
+      input.className = "edit-input tel";
+      input.placeholder = "(XX) XXXXX-XXXX";
+      input.onblur = function () {
+        barbeiro.telefone = input.value.trim() || null;
+        barbeiros[index] = barbeiro;
+        localStorage.setItem("barbeiros", JSON.stringify(barbeiros));
+        carregarBarbeiros();
+        atualizarBuscas();
+      };
+      input.onkeydown = function (e) {
+        if (e.key === "Enter") input.blur();
+      };
+      infoDiv.replaceChild(input, telSpan);
+      input.focus();
+    };
+
+    infoDiv.appendChild(nomeSpan);
+    infoDiv.appendChild(telSpan);
+
+    // === BOTÃO DE ATIVAR/INATIVAR (BARBEIRO) ===
+    const statusBtn = document.createElement("button");
+    statusBtn.className = "btn-status";
+    statusBtn.title = barbeiro.ativo ? "Clique para inativar" : "Clique para ativar";
+    statusBtn.innerHTML = barbeiro.ativo ? "✅" : "⏸️";
+    statusBtn.style.backgroundColor = barbeiro.ativo ? "#2e7d32" : "#c62828";
+
+    statusBtn.onclick = function () {
+      const novoStatus = !barbeiro.ativo;
+      if (confirm(`Tem certeza que deseja ${novoStatus ? 'ativar' : 'inativar'} o barbeiro "${barbeiro.nome}"?`)) {
+        barbeiro.ativo = novoStatus;
+        barbeiros[index] = barbeiro;
+        localStorage.setItem("barbeiros", JSON.stringify(barbeiros));
+        carregarBarbeiros();
+        atualizarBuscas();
+      }
+    };
+
+    li.appendChild(infoDiv);
+    li.appendChild(statusBtn);
+    lista.appendChild(li);
+  });
+}
+
+// Formulário de cadastro de barbeiro
+document.getElementById("formBarbeiro").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const nome = document.getElementById("nomeBarbeiro").value.trim();
+  const telefone = document.getElementById("telefoneBarbeiro").value.trim() || null;
+
+  if (!nome) {
+    alert("O nome do barbeiro é obrigatório.");
+    return;
+  }
+
+  const barbeiros = JSON.parse(localStorage.getItem("barbeiros")) || [];
+  if (barbeiros.some((b) => b.nome === nome)) {
+    alert("Barbeiro já cadastrado com esse nome.");
+    return;
+  }
+
+  // Adiciona com status ativo
+  barbeiros.push({ nome, telefone, ativo: true });
+  localStorage.setItem("barbeiros", JSON.stringify(barbeiros));
+  document.getElementById("nomeBarbeiro").value = "";
+  document.getElementById("telefoneBarbeiro").value = "";
+  carregarBarbeiros();
+  atualizarBuscas();
+});
+
+// === GERENCIAMENTO DE SERVIÇOS ===
+function carregarServicos() {
+  const lista = document.getElementById("listaServicos");
+  const servicos = JSON.parse(localStorage.getItem("servicos")) || [];
+  lista.innerHTML = "";
+
+  if (servicos.length === 0) {
+    const li = document.createElement("li");
+    li.textContent = "Nenhum serviço cadastrado.";
+    lista.appendChild(li);
+    return;
+  }
+
+  servicos.forEach((servico, index) => {
+    const li = document.createElement("li");
+
+    // Exibe nome e preço (com risco se inativo)
+    const spanNome = document.createElement("span");
+    spanNome.textContent = `${servico.nome} - R$ ${servico.preco.toFixed(2)}`;
+    if (!servico.ativo) {
+      spanNome.style.textDecoration = "line-through";
+      spanNome.style.color = "#999";
+    }
+    spanNome.style.cursor = "pointer";
+    spanNome.title = "Clique para editar";
+    spanNome.onclick = function () {
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = servico.nome;
+      input.className = "edit-input";
+      input.onblur = function () {
+        if (input.value.trim()) {
+          servico.nome = input.value.trim();
+          servicos[index] = servico;
+          localStorage.setItem("servicos", JSON.stringify(servicos));
+          carregarServicos();
+          atualizarBuscas();
+        }
+      };
+      input.onkeydown = function (e) {
+        if (e.key === "Enter") input.blur();
+      };
+      li.replaceChild(input, spanNome);
+      input.focus();
+    };
+
+    // Campo de edição de preço
+    const inputPreco = document.createElement("input");
+    inputPreco.type = "number";
+    inputPreco.step = "0.01";
+    inputPreco.value = servico.preco;
+    inputPreco.style.width = "80px";
+    inputPreco.style.padding = "4px";
+    inputPreco.style.marginLeft = "10px";
+    inputPreco.onblur = function () {
+      const novoPreco = parseFloat(inputPreco.value);
+      if (!isNaN(novoPreco)) {
+        servico.preco = novoPreco;
+        servicos[index] = servico;
+        localStorage.setItem("servicos", JSON.stringify(servicos));
+        carregarServicos();
+        atualizarBuscas();
+      }
+    };
+
+    // === BOTÃO DE ATIVAR/INATIVAR ===
+    const statusBtn = document.createElement("button");
+    statusBtn.className = "btn-status";
+    statusBtn.title = servico.ativo ? "Clique para inativar" : "Clique para ativar";
+    statusBtn.innerHTML = servico.ativo ? "✅" : "⏸️";
+    statusBtn.style.backgroundColor = servico.ativo ? "#2e7d32" : "#c62828";
+
+    statusBtn.onclick = function () {
+      const novoStatus = !servico.ativo;
+      if (confirm(`Tem certeza que deseja ${novoStatus ? 'ativar' : 'inativar'} o serviço "${servico.nome}"?`)) {
+        servico.ativo = novoStatus;
+        servicos[index] = servico;
+        localStorage.setItem("servicos", JSON.stringify(servicos));
+        carregarServicos();
+        atualizarBuscas();
+      }
+    };
+
+    // Adiciona os elementos
+    li.appendChild(spanNome);
+    li.appendChild(inputPreco);
+    li.appendChild(statusBtn);
+    lista.appendChild(li);
+  });
+}
+
+
+
+document.getElementById("formServico").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const nome = document.getElementById("nomeServico").value.trim();
+  const preco = parseFloat(document.getElementById("precoServico").value);
+
+  if (!nome || isNaN(preco)) {
+    alert("Preencha nome e preço.");
+    return;
+  }
+
+  const servicos = JSON.parse(localStorage.getItem("servicos")) || [];
+  if (servicos.some((s) => s.nome === nome)) {
+    alert("Serviço já cadastrado.");
+    return;
+  }
+
+  servicos.push({ nome, preco, ativo: true });
+  localStorage.setItem("servicos", JSON.stringify(servicos));
+  document.getElementById("nomeServico").value = "";
+  document.getElementById("precoServico").value = "";
+  carregarServicos();
+  atualizarBuscas();
+});
+
+// === FUNCIONALIDADE DE BUSCA DINÂMICA (AUTOCOMPLETE) ===
+let clientes = [];
+let barbeiros = [];
+let servicos = [];
+
+function atualizarBuscas() {
+  // Recupera e filtra apenas os ATIVOS
+  const clientesCompletos = JSON.parse(localStorage.getItem("clientes")) || [];
+  const barbeirosCompletos = JSON.parse(localStorage.getItem("barbeiros")) || [];
+  const servicosCompletos = JSON.parse(localStorage.getItem("servicos")) || [];
+
+  clientes = clientesCompletos.filter(c => c.ativo !== false);
+  barbeiros = barbeirosCompletos.filter(b => b.ativo !== false);
+  servicos = servicosCompletos.filter(s => s.ativo !== false); // ← Aqui!
+}
+
+function setupSearch(inputId, suggestionsId, data, onSelect) {
+  const input = document.getElementById(inputId);
+  const suggestions = document.getElementById(suggestionsId);
+
+  if (!input || !suggestions) return;
+
+  input.addEventListener("input", function () {
+    const term = input.value.toLowerCase();
+    suggestions.innerHTML = "";
+
+    if (term) {
+      const filtered = data.filter(item => item.nome && item.nome.toLowerCase().includes(term));
+      filtered.forEach(item => {
+        const li = document.createElement("li");
+        if (item.telefone !== undefined) {
+          li.innerHTML = `<strong>${item.nome}</strong> - ${item.telefone || "Sem telefone"}`;
+        } else {
+          li.textContent = `${item.nome} - R$ ${item.preco?.toFixed(2) || ""}`;
+        }
+        li.onclick = () => {
+          input.value = item.nome;
+          suggestions.innerHTML = "";
+          onSelect(item);
+        };
+        suggestions.appendChild(li);
+      });
+    }
+  });
+
+  input.addEventListener("blur", () => setTimeout(() => suggestions.innerHTML = "", 200));
+}
+
+// === CONSULTA DE VENDAS ===
+function filtrarVendas() {
+  const barbeiroFiltro = document.getElementById("filtro-barbeiro").value.trim();
+  const clienteFiltro = document.getElementById("filtro-cliente").value.trim().toLowerCase();
+  const servicoFiltro = document.getElementById("filtro-servico").value.trim().toLowerCase();
+
+  let dataInicio = document.getElementById("filtro-data-inicio").value;
+  let dataFim = document.getElementById("filtro-data-fim").value;
+  const hoje = new Date().toISOString().split("T")[0];
+  if (!dataInicio) dataInicio = hoje;
+  if (!dataFim) dataFim = hoje;
+
+  const vendas = JSON.parse(localStorage.getItem("vendas")) || [];
+
+  const vendasFiltradas = vendas.filter(venda => {
+    const dentroDoPeriodo = venda.data >= dataInicio && venda.data <= dataFim;
+    const barbeiroMatch = !barbeiroFiltro || venda.barbeiro.toLowerCase().includes(barbeiroFiltro.toLowerCase());
+    const clienteMatch = !clienteFiltro || venda.cliente.toLowerCase().includes(clienteFiltro);
+    const servicoMatch = !servicoFiltro || venda.servico.toLowerCase().includes(servicoFiltro);
+    return dentroDoPeriodo && barbeiroMatch && clienteMatch && servicoMatch;
+  });
+
+  exibirResultadosVendas(vendasFiltradas);
+}
+
+function exibirResultadosVendas(vendas) {
+  const resultadosDiv = document.getElementById("resultados-vendas");
+  const tabela = document.getElementById("tabela-vendas");
+  const mensagemVazio = document.getElementById("mensagem-vazio");
+
+  // Limpa tudo
+  tabela.style.display = "none";
+  resultadosDiv.innerHTML = "";
+
+  if (vendas.length === 0) {
+    const msg = document.createElement("p");
+    msg.id = "mensagem-vazio";
+    msg.textContent = "Nenhuma venda encontrada com os filtros aplicados.";
+    msg.style.textAlign = "center";
+    msg.style.color = "#888";
+    msg.style.fontStyle = "italic";
+    msg.style.padding = "20px";
+    msg.style.backgroundColor = "#2a2a3a";
+    msg.style.borderRadius = "10px";
+    msg.style.marginTop = "20px";
+    resultadosDiv.appendChild(msg);
+    return;
+  }
+
+  // === CALCULA OS TOTAIS ===
+  const totalVendas = vendas.length;
+  const valorTotal = vendas.reduce((soma, venda) => soma + venda.valor, 0);
+
+  // === CRIA O CARD DE RESUMO DOS TOTAIS ===
+  const resumoTotal = document.createElement("div");
+  resumoTotal.className = "resumo";
+  resumoTotal.style.marginTop = "0";
+  resumoTotal.style.borderLeftColor = "#4CAF50"; // Cor verde para diferenciar
+  resumoTotal.style.background = "linear-gradient(90deg, #2a3a2a, #334433)";
+  resumoTotal.innerHTML = `
+    <strong>Resumo da Consulta</strong><br>
+    <p><strong>Total de Vendas:</strong> ${totalVendas} ${totalVendas === 1 ? "venda" : "vendas"}</p>
+    <p><strong>Valor Total:</strong> R$ ${valorTotal.toFixed(2).replace('.', ',')}</p>
+  `;
+  resultadosDiv.appendChild(resumoTotal);
+
+  // === EXIBE CADA VENDA COMO COMPROVANTE (igual ao resumo original) ===
+  vendas.forEach(venda => {
+    const resumo = document.createElement("div");
+    resumo.className = "resumo";
+    resumo.style.marginTop = "20px";
+    resumo.innerHTML = `
+      <strong>Venda realizada</strong><br>
+      <p><strong>Data:</strong> ${formatarData(venda.data)}</p>
+      <p><strong>Cliente:</strong> ${venda.cliente}</p>
+      <p><strong>Barbeiro:</strong> ${venda.barbeiro}</p>
+      <p><strong>Serviço:</strong> ${venda.servico}</p>
+      <p><strong>Valor:</strong> R$ ${venda.valor.toFixed(2).replace('.', ',')}</p>
+      <p><strong>Pagamento:</strong> ${venda.pagamento}</p>
+    `;
+    resultadosDiv.appendChild(resumo);
+  });
+}
+
+function formatarData(dataISO) {
+  const [ano, mes, dia] = dataISO.split("-");
+  return `${dia}/${mes}/${ano}`;
+}
+
+// === REGISTRO DE VENDAS ===
+document.getElementById("formVenda").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const cliente = document.getElementById("cliente").value.trim();
+  const barbeiro = document.getElementById("barbeiro").value.trim();
+  const servico = document.getElementById("servico").value.trim();
+  const valor = parseFloat(document.getElementById("valor").value);
+  const pagamento = document.getElementById("pagamento").value;
+
+  if (!cliente || !barbeiro || !servico || isNaN(valor) || !pagamento) {
+    alert("Por favor, preencha todos os campos.");
+    return;
+  }
+
+  const venda = {
+    cliente,
+    barbeiro,
+    servico,
+    valor,
+    pagamento,
+    data: new Date().toISOString().split("T")[0]
+  };
+
+  const vendas = JSON.parse(localStorage.getItem("vendas")) || [];
+  vendas.push(venda);
+  localStorage.setItem("vendas", JSON.stringify(vendas));
+
+  document.getElementById("infoCliente").textContent = cliente;
+  document.getElementById("infoBarbeiro").textContent = barbeiro;
+  document.getElementById("infoServico").textContent = servico;
+  document.getElementById("infoValor").textContent = valor.toFixed(2);
+  document.getElementById("infoPagamento").textContent = pagamento;
+
+  document.getElementById("resumoVenda").style.display = "block";
+  this.reset();
+});
+
+// === CÁLCULO DE COMISSÃO ===
+function buscarVendas() {
+  const barbeiroNome = document.getElementById("barbeiroComissao").value.trim();
+  if (!barbeiroNome) {
+    alert("Selecione um barbeiro.");
+    return;
+  }
+
+  let dataInicio, dataFim;
+  const periodo = document.getElementById("periodo").value;
+  const hoje = new Date();
+  dataFim = hoje.toISOString().split("T")[0];
+
+  if (periodo === "personalizado") {
+    dataInicio = document.getElementById("dataInicio").value;
+    dataFim = document.getElementById("dataFim").value;
+    if (!dataInicio || !dataFim) {
+      alert("Preencha as datas de início e fim.");
+      return;
+    }
+  } else {
+    hoje.setDate(hoje.getDate() - (periodo === "semana" ? 7 : 30));
+    dataInicio = hoje.toISOString().split("T")[0];
+  }
+
+  const vendas = JSON.parse(localStorage.getItem("vendas")) || [];
+  const total = vendas
+    .filter(v => v.barbeiro === barbeiroNome && v.data >= dataInicio && v.data <= dataFim)
+    .reduce((sum, v) => sum + v.valor, 0);
+
+  document.getElementById("totalVendasExibido").textContent = total.toFixed(2);
+  document.getElementById("vendasInfo").style.display = "block";
+  document.getElementById("comissaoInputs").style.display = "block";
+  window.totalVendas = total;
+  window.nomeBarbeiro = barbeiroNome;
+}
+
+function calcularComissao() {
+  const porcentagem = parseFloat(document.getElementById("porcentagem").value);
+  if (isNaN(porcentagem) || porcentagem <= 0) {
+    alert("Porcentagem inválida.");
+    return;
+  }
+
+  const comissao = (window.totalVendas * porcentagem) / 100;
+  document.getElementById("nomeBarbeiroRes").textContent = window.nomeBarbeiro;
+  document.getElementById("totalVendasRes").textContent = window.totalVendas.toFixed(2);
+  document.getElementById("percentualRes").textContent = porcentagem.toFixed(2);
+  document.getElementById("valorComissaoRes").textContent = comissao.toFixed(2);
+  document.getElementById("resultado").style.display = "block";
+}
+
+// === CONTROLE DE CAMPOS ===
+document.getElementById("periodo").addEventListener("change", function () {
+  document.getElementById("dataPersonalizada").style.display = this.value === "personalizado" ? "block" : "none";
+});
+
+// === INICIALIZAÇÃO ===
+document.addEventListener("DOMContentLoaded", function () {
+  carregarClientes();
+  carregarBarbeiros();
+  carregarServicos();
+  atualizarBuscas();
+
+  setupSearch("cliente", "suggestions-cliente", clientes, function (cliente) {
+    document.getElementById("cliente").value = cliente.nome;
+  });
+  setupSearch("barbeiro", "suggestions-barbeiro", barbeiros, function (barbeiro) {
+    document.getElementById("barbeiro").value = barbeiro.nome;
+  });
+  setupSearch("barbeiroComissao", "suggestions-comissao", barbeiros, function (barbeiro) {
+    document.getElementById("barbeiroComissao").value = barbeiro.nome;
+  });
+  setupSearch("servico", "suggestions-servico", servicos, function (servico) {
+    document.getElementById("servico").value = servico.nome;
+    document.getElementById("valor").value = servico.preco;
+  });
+
+  // Consulta de vendas
+  setupSearch("filtro-barbeiro", "suggestions-filtro-barbeiro", barbeiros, function (barbeiro) {
+    document.getElementById("filtro-barbeiro").value = barbeiro.nome;
+  });
+  setupSearch("filtro-cliente", "suggestions-filtro-cliente", clientes, function (cliente) {
+    document.getElementById("filtro-cliente").value = cliente.nome;
+  });
+  setupSearch("filtro-servico", "suggestions-filtro-servico", servicos, function (servico) {
+    document.getElementById("filtro-servico").value = servico.nome;
+  });
+
+  const btnFiltrar = document.querySelector("#cvenda .btn-filter");
+  if (btnFiltrar) btnFiltrar.onclick = filtrarVendas;
+
+  document.querySelectorAll(".sidebar .tab").forEach(tab => {
+    if (tab.getAttribute("onclick") === "showTab('cvenda')") {
+      tab.addEventListener("click", function () {
+        document.getElementById("filtro-data-inicio").value = "";
+        document.getElementById("filtro-data-fim").value = "";
+        document.getElementById("filtro-cliente").value = "";
+        document.getElementById("filtro-barbeiro").value = "";
+        document.getElementById("filtro-servico").value = "";
+        document.getElementById("tabela-vendas").style.display = "none";
+        document.getElementById("mensagem-vazio").style.display = "none";
+      });
+    }
+  });
+
+  // === CONTROLE DE TEMA ===
+  const btnTema = document.getElementById("btnTema");
+  const temaSalvo = localStorage.getItem("tema");
+  if (temaSalvo === "claro") {
+    document.body.classList.add("tema-claro");
+    btnTema.textContent = "Alternar para Escuro";
+  }
+  btnTema.addEventListener("click", () => {
+    document.body.classList.toggle("tema-claro");
+    if (document.body.classList.contains("tema-claro")) {
+      btnTema.textContent = "Alternar para Escuro";
+      localStorage.setItem("tema", "claro");
+    } else {
+      btnTema.textContent = "Alternar para Claro";
+      localStorage.setItem("tema", "escuro");
+    }
+  });
+});
+
+// === AGENDAR HORÁRIO ===
+function carregarAgendarBuscas() {
+  setupSearch("agendarCliente", "suggestions-agendar-cliente", clientes, function (cliente) {
+    document.getElementById("agendarCliente").value = cliente.nome;
+  });
+  setupSearch("agendarBarbeiro", "suggestions-agendar-barbeiro", barbeiros, function (barbeiro) {
+    document.getElementById("agendarBarbeiro").value = barbeiro.nome;
+  });
+  setupSearch("agendarServico", "suggestions-agendar-servico", servicos, function (servico) {
+    document.getElementById("agendarServico").value = servico.nome;
+  });
+}
+
+document.getElementById("formAgendar").addEventListener("submit", function (e) {
+  e.preventDefault();
+  const cliente = document.getElementById("agendarCliente").value.trim();
+  const barbeiro = document.getElementById("agendarBarbeiro").value.trim();
+  const servico = document.getElementById("agendarServico").value.trim();
+  const data = document.getElementById("agendarData").value;
+  const hora = document.getElementById("agendarHora").value;
+  const observacoes = document.getElementById("agendarObs").value.trim();
+
+  if (!cliente || !barbeiro || !servico || !data || !hora) {
+    alert("Preencha todos os campos obrigatórios.");
+    return;
+  }
+
+  const agendamentos = JSON.parse(localStorage.getItem("agendamentos")) || [];
+  agendamentos.push({ cliente, barbeiro, servico, data, hora, observacoes });
+  localStorage.setItem("agendamentos", JSON.stringify(agendamentos));
+
+  document.getElementById("agendarInfoCliente").textContent = cliente;
+  document.getElementById("agendarInfoBarbeiro").textContent = barbeiro;
+  document.getElementById("agendarInfoServico").textContent = servico;
+  document.getElementById("agendarInfoData").textContent = data.split("-").reverse().join("/");
+  document.getElementById("agendarInfoHora").textContent = hora;
+  document.getElementById("agendarInfoObs").textContent = observacoes || "-";
+
+  document.getElementById("resumoAgendar").style.display = "block";
+  this.reset();
+});
+
+if (document.getElementById("agendar")) {
+  carregarAgendarBuscas();
+}
+</script>

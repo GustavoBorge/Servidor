@@ -1,0 +1,535 @@
+ * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* === FONTES ESTILO BARBEARIA === */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto:wght@400;500&display=swap');
+
+body {
+  background-color: #121212;
+  color: #e0e0e0;
+  line-height: 1.6;
+  background-image: url('https://images.unsplash.com/photo-1605497790372-0aa85452085c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-blend-mode: overlay;
+}
+
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* === MENU LATERAL === */
+.sidebar {
+  width: 280px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  color: #fff;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 15px rgba(0, 0, 0, 0.3);
+  border-right: 1px solid #333;
+}
+
+.sidebar h2 {
+  text-align: center;
+  margin-bottom: 40px;
+  color: #f0c808;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 5px rgba(240, 200, 8, 0.4);
+}
+
+.sidebar .tab {
+  padding: 16px 20px;
+  cursor: pointer;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid transparent;
+}
+
+.sidebar .tab:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(4px);
+}
+
+.sidebar .tab.active {
+  background-color: #f0c808;
+  color: #1a1a2e;
+  font-weight: bold;
+  border-left: 3px solid #c7a105;
+}
+
+/* === CONTEÚDO PRINCIPAL === */
+.main-content {
+  flex: 1;
+  padding: 40px;
+  backdrop-filter: blur(10px);
+  background-color: rgba(18, 18, 18, 0.85);
+}
+
+.main-content .tab-content {
+  display: none;
+  background: rgba(30, 30, 46, 0.9);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  border: 1px solid #333;
+  color: #e0e0e0;
+}
+
+.main-content .tab-content.active {
+  display: block;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+  font-size: 2rem;
+  color: #f0c808;
+  margin-bottom: 25px;
+  font-family: 'Playfair Display', serif;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+label {
+  display: block;
+  margin: 20px 0 8px;
+  font-weight: bold;
+  color: #f0c808;
+  font-size: 0.95rem;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background-color: #2a2a3a;
+  color: #fff;
+  font-size: 16px;
+  transition: border 0.3s;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #f0c808;
+  box-shadow: 0 0 8px rgba(240, 200, 8, 0.3);
+}
+
+button {
+  margin-top: 16px;
+  padding: 14px;
+  width: 100%;
+  background-color: #f0c808;
+  color: #1a1a2e;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+button:hover {
+  background-color: #e0b807;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(240, 200, 8, 0.2);
+}
+
+/* === RESUMO DE VENDA (comum aos dois temas) === */
+.resumo {
+  margin-top: 20px;
+  padding: 20px;
+  border-left: 5px solid #f0c808;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.resumo strong {
+  color: #f0c808;
+}
+
+.resumo p {
+  margin: 6px 0;
+}
+
+/* Tema escuro: fundo escuro com gradiente */
+body:not(.tema-claro) .resumo {
+  background: linear-gradient(90deg, #2a2a3a, #333);
+  color: #e0e0e0;
+}
+
+/* Tema claro: fundo claro com destaque dourado */
+body.tema-claro .resumo {
+  background-color: #f8f3e6;
+  color: #333;
+  border-left-color: #f0c808;
+}
+
+body.tema-claro .resumo strong {
+  color: #1e1e2f;
+}
+
+/* === RESUMO DE TOTAL DE VENDAS === */
+.resumo-total {
+  border-left-color: #4CAF50;
+}
+
+body:not(.tema-claro) .resumo-total {
+  background: linear-gradient(90deg, #2a3a2a, #334433);
+  color: #e0e0e0;
+}
+
+body:not(.tema-claro) .resumo-total strong {
+  color: #81C784; /* Verde claro brilhante no tema escuro */
+}
+
+body.tema-claro .resumo-total {
+  background-color: #e8f5e8;
+  color: #2e7d32; /* Texto principal escuro */
+  border-left-color: #4CAF50;
+}
+
+body.tema-claro .resumo-total strong {
+  color: #1b5e20; /* Verde bem escuro para contraste no tema claro */
+  font-weight: 600;
+}
+
+/* === LISTAS (Clientes, Barbeiros, Serviços) === */
+ul {
+  list-style: none;
+  margin-top: 15px;
+}
+
+li {
+  padding: 14px;
+  background: #2a2a3a;
+  margin-bottom: 10px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  border: 1px solid #333;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.3);
+  background: #333;
+}
+
+.cliente-info {
+  flex: 1;
+  min-width: 180px;
+}
+
+.cliente-info strong {
+  display: block;
+  font-size: 15px;
+  color: #f0c808;
+}
+
+.cliente-info span {
+  font-size: 13px;
+  color: #aaa;
+}
+
+.edit-input {
+  width: 100%;
+  padding: 6px;
+  font-size: 14px;
+  border: 1px solid #f0c808;
+  border-radius: 4px;
+  background-color: #1a1a2e;
+  color: white;
+}
+
+.edit-input.tel {
+  width: 100%;
+}
+
+.btn-remove {
+  background: #e53935;
+  color: white;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+
+.btn-remove:hover {
+  background: #c62828;
+  transform: scale(1.1);
+}
+
+/* === CAMPO DE BUSCA (Autocomplete) === */
+.search-container {
+  position: relative;
+}
+
+.suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: #1a1a2e;
+  border: 1px solid #f0c808;
+  border-top: none;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.suggestions li {
+  padding: 12px 14px;
+  cursor: pointer;
+  border-bottom: 1px solid #333;
+  color: #ddd;
+  transition: background 0.2s;
+}
+
+.suggestions li:hover {
+  background: #2a2a3a;
+  color: #f0c808;
+}
+
+.suggestions li strong {
+  color: #f0c808;
+}
+
+/* === TABELA DE VENDAS (oculta - usamos cards) === */
+#tabela-vendas {
+  display: none;
+}
+
+/* === MENSAGEM DE VAZIO === */
+#mensagem-vazio {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  margin-top: 20px;
+  padding: 20px;
+  background: #2a2a3a;
+  border-radius: 10px;
+}
+
+body.tema-claro #mensagem-vazio {
+  background-color: #f8f9fa;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+/* === RESPONSIVO === */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    order: -1;
+    padding: 15px;
+  }
+
+  .sidebar h2 {
+    font-size: 1.5rem;
+  }
+
+  .main-content {
+    padding: 20px;
+  }
+
+  .main-content .tab-content {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+  }
+}
+
+/* === ESTILO ESPECÍFICO PARA SERVIÇOS === */
+#listaServicos > li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+#listaServicos > li > span {
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  color: #f0c808;
+  font-weight: 500;
+}
+
+#listaServicos > li > input[type="number"] {
+  width: 100px;
+  margin: 0 10px;
+  padding: 6px;
+  background: #1a1a2e;
+  border: 1px solid #f0c808;
+  color: white;
+}
+
+#listaServicos > li > .btn-remove {
+  flex-shrink: 0;
+  align-self: center;
+  margin-left: 10px;
+}
+
+/* === BOTÃO DE TEMA === */
+.btn-tema {
+  padding: 10px;
+  margin-bottom: 20px;
+  background-color: #555;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.btn-tema:hover {
+  background-color: #333;
+}
+
+/* === TEMA CLARO - BARBEARIA MODERNA === */
+body.tema-claro {
+  background-color: #f8f9fa;
+  color: #333;
+  transition: background-color 0.4s ease;
+}
+
+body.tema-claro .sidebar {
+  background: linear-gradient(135deg, #ffffff, #f0f0f5);
+  color: #333;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+body.tema-claro .sidebar h2 {
+  color: #1e1e2f;
+  text-shadow: none;
+  font-weight: 600;
+}
+
+body.tema-claro .tab {
+  background-color: rgba(255, 255, 255, 0.6);
+  color: #333;
+  border: 1px solid #e0e0e0;
+  backdrop-filter: blur(5px);
+}
+
+body.tema-claro .tab:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-color: #f0c808;
+}
+
+body.tema-claro .tab.active {
+  background-color: #f0c808;
+  color: #1e1e2f;
+  font-weight: bold;
+  border-color: #d6b007;
+}
+
+body.tema-claro .main-content {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+body.tema-claro .main-content .tab-content {
+  background: white;
+  border: 1px solid #e0e0e0;
+  color: #333;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+body.tema-claro h1 {
+  color: #1e1e2f;
+}
+
+body.tema-claro label {
+  color: #1e1e2f;
+}
+
+body.tema-claro input,
+body.tema-claro select {
+  background-color: #fdfdfd;
+  color: #333;
+  border-color: #ccc;
+}
+
+body.tema-claro input:focus,
+body.tema-claro select:focus {
+  border-color: #f0c808;
+  box-shadow: 0 0 0 2px rgba(240, 200, 8, 0.2);
+}
+
+body.tema-claro button {
+  background-color: #f0c808;
+  color: #1e1e2f;
+  border: none;
+}
+
+body.tema-claro button:hover {
+  background-color: #e0b807;
+  transform: translateY(-1px);
+}
+
+body.tema-claro li {
+  background: #fdfdfd;
+  border: 1px solid #eee;
+}
+
+body.tema-claro li:hover {
+  background: #f5f5f5;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+body.tema-claro .suggestions {
+  background: white;
+  border-color: #ddd;
+  color: #333;
+}
+
+body.tema-claro .suggestions li:hover {
+  background: #f0f0f0;
+  color: #1e1e2f;
+}
+
+body.tema-claro #tabela-vendas th {
+  background-color: #f0c808;
+  color: #1e1e2f;
+}

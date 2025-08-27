@@ -1,0 +1,20 @@
+{
+  "name": "Barbe-IPAPI",
+  "version": "1.0.0",
+  "description": "Api para site de barbearia o projeto Barbe-IA",
+  "main": "app.js",
+  "type":"commonjs",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "body-parser": "^2.2.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.3",
+    "sequelize": "^6.37.7"
+  }
+}
